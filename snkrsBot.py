@@ -216,9 +216,10 @@ if __name__ == '__main__':
         user.append(line_list)
     file.close()
 
-    print(user[0][0])
-    print(user[0][2])
+    mail_user = user[0][0]
+    mdp_user = user[0][2]
+    login(mail_user, mdp_user)
 
-    login(user[0][0], user[0][2])
     urllib3.disable_warnings()
+
     monitor()
