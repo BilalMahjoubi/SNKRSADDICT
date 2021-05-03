@@ -169,39 +169,42 @@ def monitor():
 def login(mail, mdp):
     options = webdriver.ChromeOptions()
     options.add_argument("--incognito")
-    options.binary_location = "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome"
-    chrome_driver_binary = "/Users/bilal/Downloads/chromedriver"
+    options.binary_location = "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome" #readMe
+    chrome_driver_binary = "/Users/gabrieldray/Downloads/chromedriver" #readMe
     chrome = webdriver.Chrome(chrome_driver_binary, chrome_options=options)
 
-    webpage = r"https://www.nike.com/login"  # edit me
-    chrome.get(webpage)
+    list_page = ["https://www.nike.com/login", "https://www.courir.com/on/demandware.store/Sites-Courir-FR-Site/fr_FR/Login-Show"]
+    for webpage in list_page:
 
-    dico_form = {"sneakersnstuff": "auth__form js-auth-form", "nike": "nike-unite-form"}  # id pour stockx
+        chrome.get(webpage)
 
-    start = webpage.find("www.") + len("www.")
-    end = webpage.find(".com")
-    site_name = webpage[start:end]
-    print(site_name)
+        dico_form = {"courir": "login-form clearfix", "nike": "nike-unite-form"}  # id pour stockx
 
-    xpath_input = f"""//form[@class="{dico_form.get(site_name)}"]//input"""
-    xpath_button = f"""//form[@class="{dico_form.get(site_name)}"]//button"""
+        start = webpage.find("www.") + len("www.")
+        end = webpage.find(".com")
+        site_name = webpage[start:end]
+        print(site_name)
 
-    _inputs = chrome.find_elements_by_xpath(xpath_input)
-    _buttons = chrome.find_elements_by_xpath(xpath_button)
+        xpath_input = f"""//form[@class="{dico_form.get(site_name)}"]//input"""
+        xpath_button = f"""//form[@class="{dico_form.get(site_name)}"]//button"""
 
-    list_name_attribute = []
+        _inputs = chrome.find_elements_by_xpath(xpath_input)
+        _buttons = chrome.find_elements_by_xpath(xpath_button)
 
-    for inpt in _inputs:
-        if (inpt.get_attribute('type') != "hidden"):
-            list_name_attribute.append(inpt.get_attribute('id'))
+        list_name_attribute = []
 
-    print(list_name_attribute)
+        for inpt in _inputs:
+            if (inpt.get_attribute('type') != "hidden"):
+                list_name_attribute.append(inpt.get_attribute('id'))
 
-    chrome.find_element_by_id(list_name_attribute[0]).send_keys(mail)
-    chrome.find_element_by_id(list_name_attribute[1]).send_keys(mdp)
-    #chrome.find_element_by_xpath(xpath_button).click()
+        print(list_name_attribute)
 
-    #return list_name_attribute
+        chrome.find_element_by_id(list_name_attribute[0]).send_keys(mail)
+        chrome.find_element_by_id(list_name_attribute[1]).send_keys(mdp)
+        # chrome.find_element_by_xpath(xpath_button).click()
+
+        # return list_name_attribute
+
 
 if __name__ == '__main__':
 
@@ -211,8 +214,11 @@ if __name__ == '__main__':
         s = line.strip()
         line_list = s.split(";")
         user.append(line_list)
-
     file.close()
-    login(user[0], user[2])
+
+    print(user[0][0])
+    print(user[0][2])
+
+    login(user[0][0], user[0][2])
     urllib3.disable_warnings()
-    #monitor()
+    monitor()
