@@ -203,9 +203,16 @@ def login(mail, mdp):
 
     #return list_name_attribute
 
-
 if __name__ == '__main__':
-    login("gaboy.dray@gmail.com", "meeeh")
-    print("uuuuuui")
+
+    file = open("user.csv", "r")
+    user = []
+    for line in file:
+        s = line.strip()
+        line_list = s.split(";")
+        user.append(line_list)
+
+    file.close()
+    login(user[0], user[2])
     urllib3.disable_warnings()
-    monitor()
+    #monitor()
