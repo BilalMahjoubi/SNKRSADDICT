@@ -4,6 +4,8 @@
 
 -> Clone le repository sur un environnement de serveur local (MAMP, XAMP, WAMP) pour faire fonctionner le site php de comparaison de prix : SNRKDADDICT
 
+-> décompresseer le dossier "img"
+
 -> Installer la base de données SQL depuis le script qui se situe dans le fichier bdd
 
 -> Test du bot d'inscription sur le login de Nike et Courir 
