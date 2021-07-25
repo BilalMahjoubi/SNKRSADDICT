@@ -9,25 +9,21 @@ from random_user_agent.user_agent import UserAgent
 from random_user_agent.params import SoftwareName, HardwareType
 from fp.fp import FreeProxy
 from selenium import webdriver
-
-logging.basicConfig(filename='SNKRSlog.log', filemode='a', format='%(asctime)s - %(name)s - %(message)s',
+class Bot:
+  logging.basicConfig(filename='SNKRSlog.log', filemode='a', format='%(asctime)s - %(name)s - %(message)s',
                     level=logging.DEBUG)
 
-software_names = [SoftwareName.CHROME.value]
-hardware_type = [HardwareType.MOBILE__PHONE]
-user_agent_rotator = UserAgent(software_names=software_names, hardware_type=hardware_type)
-CONFIG = dotenv.dotenv_values("e.env")
+  software_names = [SoftwareName.CHROME.value]
+  hardware_type = [HardwareType.MOBILE__PHONE]
+  user_agent_rotator = UserAgent(software_names=software_names, hardware_type=hardware_type)
+  CONFIG = dotenv.dotenv_values("e.env")
 
-proxyObject = FreeProxy(country_id=['FR'], rand=True)
+  proxyObject = FreeProxy(country_id=['FR'], rand=True)
 
-INSTOCK = []
+  INSTOCK = []
 
 
 def scrape_site(headers, proxy):
-    """
-    Scrapes SNKRS site and adds items to array
-    :return: None
-    """
     items = []
     anchor = 0
     while anchor < 180:
@@ -47,12 +43,6 @@ def scrape_site(headers, proxy):
 
 
 def checker(product, colour):
-    """
-    Determines whether the product status has changed
-    :param product: Shoe name
-    :param colour: Shoe colour
-    :return: None
-    """
     for item in INSTOCK:
         if item == [product, colour]:
             return True
@@ -60,14 +50,6 @@ def checker(product, colour):
 
 
 def discord_webhook(title, colour, slug, thumbnail):
-    """
-    Sends a Discord webhook notification to the specified webhook URL
-    :param title: Shoe name
-    :param colour: Shoe Colour
-    :param slug: Shoe URL
-    :param thumbnail: URL to shoe image
-    :return: None
-    """
     data = {}
     data["username"] = CONFIG['USERNAME']
     data["avatar_url"] = CONFIG['AVATAR_URL']
@@ -100,11 +82,6 @@ def discord_webhook(title, colour, slug, thumbnail):
 
 
 def remove_duplicates(mylist):
-    """
-    Removes duplicate values from a list
-    :param mylist: list
-    :return: list
-    """
     return [list(t) for t in set(tuple(element) for element in mylist)]
 
 
@@ -134,11 +111,6 @@ def comparitor(j, start):
 
 
 def monitor():
-    """
-    Initiates the monitor
-    :return: None
-    """
-
     print('STARTING MONITOR')
     logging.info(msg='Successfully started monitor')
     discord_webhook(title='', slug='', colour='', thumbnail='')
@@ -181,8 +153,20 @@ def monitor():
                 logging.error(e)
         start = 0
 
+class User: 
 
-def login(mail, mdp):
+  def __init__(mail_user, mdp_user):
+    self.mail = mail_user
+    self.mdp = mdp_user
+
+  
+  def get_mail ():
+    return self.mail
+
+  def get_mdp():
+    return self.mdp
+  
+  def login(self):
     options = webdriver.ChromeOptions()
     options.add_argument("--incognito")
     options.binary_location = "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome"
@@ -213,25 +197,30 @@ def login(mail, mdp):
 
     print(list_name_attribute)
 
-    chrome.find_element_by_id(list_name_attribute[0]).send_keys(mail)
-    chrome.find_element_by_id(list_name_attribute[1]).send_keys(mdp)
+    chrome.find_element_by_id(list_name_attribute[0]).send_keys(self.mail)
+    chrome.find_element_by_id(list_name_attribute[1]).send_keys(self.mdp)
     # chrome.find_element_by_xpath(xpath_button).click()
 
     return list_name_attribute
-
-
-if __name__ == '__main__':
-    file = open("user.csv", "r")
-    user = []
+ 
+def open_file(path:str):
+    file = open(path, "r")
+    user_list = []
     for line in file:
         s = line.strip()
         line_list = s.split(";")
-        user.append(line_list)
+        user_list.append(line_list)
     file.close()
 
-    mail_user = user[0][0]
-    mdp_user = user[0][2]
-    login(mail_user, mdp_user)
+    return user_list
+ if __name__ == '__main__':
+    
+    user_list = open_file("user.csv")
+
+    user = User(user_list[0][0], user_list[0][2])
+    user.login()
+    bot = Bot()
+
     print(str(get_webhook_discord()))
     urllib3.disable_warnings()
-    monitor()
+    bot.monitor()
